@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doraemon Myanmar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0b0c10; color: #c5c6c7; font-family: sans-serif; }
+        .navbar { background-color: #1f2833 !important; border-bottom: 2px solid #45f3ff; }
+        .navbar-brand { color: #45f3ff !important; font-weight: bold; font-size: 22px; }
+        
+        /* Movie Grid Card Style */
+        .movie-card { background: #1f2833; border: none; border-radius: 10px; overflow: hidden; transition: 0.3s; cursor: pointer; }
+        .movie-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(69, 243, 255, 0.3); }
+        .movie-card img { height: 260px; object-fit: cover; width: 100%; }
+        .rating-badge { position: absolute; top: 10px; right: 10px; background: #1f2833; color: #45f3ff; padding: 2px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; border: 1px solid #45f3ff; }
+        
+        /* Detail Page (Modal) Styling */
+        .modal-content { background-color: #1f2833; color: #ffffff; border-radius: 15px; border: 1px solid #45f3ff; }
+        .detail-poster { width: 100%; border-radius: 10px; border: 2px solid #45f3ff; max-height: 350px; object-fit: cover; }
+        .synopsis-box { background: #0b0c10; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #45f3ff; }
+        
+        /* Download Links Table */
+        .download-table { background: #0b0c10; border-radius: 8px; overflow: hidden; margin-top: 20px; }
+        .download-table th { background-color: #45f3ff; color: #0b0c10; }
+        .download-table td { vertical-align: middle; }
+        .btn-dl { background-color: #45f3ff; color: #0b0c10; font-weight: bold; border-radius: 5px; text-decoration: none; padding: 5px 10px; transition: 0.3s; }
+        .btn-dl:hover { background-color: #66fcf1; color: #0b0c10; }
+        
+        footer { background: #1f2833; padding: 15px 0; border-top: 1px solid #45f3ff; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-film me-2"></i>Doraemon Myanmar</a>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <h4 class="text-light mb-4"><i class="fas fa-star text-warning me-2"></i>လတ်တလောထွက်ရှိထားသော ဇာတ်ကားများ</h4>
+        <div class="row row-cols-2 row-cols-md-4 g-3" id="movie-grid">
+            </div>
+    </div>
+
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="movie-title" style="color: #45f3ff;">Doraemon Myanmar</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3 mb-md-0">
+                            <img src="" id="movie-poster" class="detail-poster" alt="Poster">
+                        </div>
+                        <div class="col-md-8">
+                            <h3 id="movie-info-title" class="text-light">Title</h3>
+                            <p class="text-muted m-0">Rating: <span id="movie-rating" class="text-warning">⭐ 0.0</span></p>
+                            <p class="text-muted m-0">Year: <span id="movie-year">2026</span></p>
+                            
+                            <div class="synopsis-box">
+                                <h6 style="color: #45f3ff;">Synopsis (ဇာတ်လမ်းအညွှန်း)</h6>
+                                <p id="movie-synopsis" class="small m-0" style="line-height: 1.6; color: #e5e5e5;"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4 text-light"><i class="fas fa-download text-success me-2"></i>Download Links</h5>
+                    <div class="table-responsive download-table">
+                        <table class="table table-dark table-striped m-0">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Server Name</th>
+                                    <th>Resolution</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="download-links-pool">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center text-muted">
+        <div class="container">
+            <small>&copy; 2026 Doraemon Myanmar. All rights reserved.</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ✍️ ဒီအောက်က နေရာမှာ တခြားကားတွေ ထပ်ထည့်ချင်ရင် ကော်မာ (,) ခံပြီး ပုံစံတူ ထပ်တိုးသွားရုံပါပဲဗျာ။
+        const MOVIES_DATA = [
+            {
+                id: 1,
+                title: "The Tigers (Aka) Los Tigres",
+                poster: "https://image.tmdb.org/t/p/w500/t6kbw3z9YvSjS0rljv5wEvw13m5.jpg",
+                rating: "6.2",
+                year: "2025",
+                synopsis: "စပိန်ဒါရိုက်တာ Alberto Rodríguez ရိုက်ကူးထားတဲ့ ရေအောက်မှူးခင်း သံသယထိတ်လန့်စရာ ဇာတ်ကားကောင်းတစ်ကားပါ။ ဒီဇာတ်ကားလေးထဲမှာ အန်တိုနီယိုနဲ့ အက်စတာရယ်လ်လာ ဆိုတဲ့ မောင်နှမနှစ်ယောက်အကြောင်းကို အဓိက ရိုက်ကူးထားတာဖြစ်ပြီး ရေငုပ်သမားအဖေကနေ ဆင်းသက်လာတာမို့လို့ တစ်သက်လုံး ပင်လယ်ထဲမှာပဲ ကြီးပြင်းခဲ့ကြတာပေါ့...",
+                downloads: [
+                    { name: "Telegram Channel", res: "720p HD", url: "https://t.me/mmchannel0" },
+                    { name: "Yoteshin Link", res: "1080p FHD", url: "" }
+                ]
+            },
+            {
+                id: 2,
+                title: "Doraemon Movie: Nobita's Earth Symphony",
+                poster: "https://image.tmdb.org/t/p/w500/jeGv7u6m6Z7069wU6mq1vGjGyCg.jpg",
+                rating: "7.9",
+                year: "2024",
+                synopsis: "နိုဘီတာတစ်ယောက် ပုလွေမှုတ်ရာကနေ စတင်ပြီး ကမ္ဘာမြေကြီးရဲ့ ဂီတသံစဉ်တွေကို ကယ်တင်ဖို့အတွက် ဒိုရေမွန်တို့သူけないချင်းတစ်သိုက် အာကာသထဲက ဂီတဂြိုဟ်ကြီးဆီကို သွားရောက် စွန့်စားရမယ့် ဒိုရေမွန်ဇာတ်ကားကောင်း ဖြစ်ပါတယ်...",
+                downloads: [
+                    { name: "Telegram Channel", res: "720p HD", url: "https://t.me/mmchannel0" }
+                ]
+            }
+        ];
+
+        // Load Grid
+        const movieGrid = document.getElementById('movie-grid');
+        MOVIES_DATA.forEach(movie => {
+            movieGrid.innerHTML += `
+                <div class="col" onclick="openDetail(${movie.id})">
+                    <div class="card movie-card position-relative">
+                        <span class="rating-badge">⭐ ${movie.rating}</span>
+                        <img src="${movie.poster}" class="card-img-top" alt="Poster">
+                        <div class="card-body p-2">
+                            <h6 class="card-title text-truncate text-light small m-0">${movie.title}</h6>
+                            <small class="text-muted">${movie.year}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Open Detail Modal
+        const myModal = new bootstrap.Modal(document.getElementById('detailModal'));
+        function openDetail(id) {
+            const movie = MOVIES_DATA.find(m => m.id === id);
+            if(movie) {
+                document.getElementById('movie-title').innerText = "Doraemon Myanmar";
+                document.getElementById('movie-info-title').innerText = movie.title;
+                document.getElementById('movie-poster').src = movie.poster;
+                document.getElementById('movie-rating').innerText = "⭐ " + movie.rating;
+                document.getElementById('movie-year').innerText = movie.year;
+                document.getElementById('movie-synopsis').innerText = movie.synopsis;
+                
+                const linksPool = document.getElementById('download-links-pool');
+                linksPool.innerHTML = "";
+                movie.downloads.forEach((dl, index) => {
+                    linksPool.innerHTML += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td class="text-info"><i class="fas fa-server me-2"></i>${dl.name}</td>
+                            <td><span class="badge bg-secondary">${dl.res}</span></td>
+                            <td><a href="${dl.url}" target="_blank" class="btn-dl"><i class="fas fa-cloud-download-alt me-1"></i>Link</a></td>
+                        </tr>
+                    `;
+                });
+                
+                myModal.show();
+            }
+        }
+    </script>
+</body>
+</html>
+
